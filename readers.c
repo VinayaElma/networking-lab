@@ -14,16 +14,18 @@ int val=1;
 void *reader(void* k)
 {
 
-	for(int j=0;j<5;j++)
-	{
-		sleep(rand()%5);
-		sem_wait(&mutex);
+	while(1)
+		{
+		sleep(2);
+		printf("Reader %d is requestinng\n",*((int *)k));
+		sem_trywait(&mutex);
 		rc ++;
 		if (rc == 1)
-			sem_wait(&wrt);
+			sem_trywait(&wrt);
 		sem_post(&mutex);
 		printf("Reader %d reads %d\n",*((int *)k),val);
-		sem_wait(&mutex);
+		
+		sem_trywait(&mutex);
 		rc --;
 		if (rc == 0)
 			sem_post(&wrt);
@@ -35,17 +37,17 @@ void *reader(void* k)
 
 void *writer(void* k)
 {
-	for(int j=0;j<5;j++)
+	
+	while(1)
 	{
-		sleep(rand()%5);
-		
-		sem_wait(&wrt);
+		sleep(2);		
+	printf("Writer %d is requestinng\n",*((int *)k));
+		sem_trywait(&wrt);
 		val=rand()%10+1;
 		printf("Writer %d writes %d\n",*((int *)k),val);
-		sem_post(&wrt);
 		
+		sem_post(&wrt);
 	}
-
 }
 
 
